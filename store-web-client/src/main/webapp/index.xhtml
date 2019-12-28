@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core"
+	  xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Java Store</title>
+</h:head>
+<h:body>
+
+
+
+	<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		<h:outputText value="#{messages.waiting}" />
+	</p:dialog>
+
+
+	<h:form>
+
+		<div class="ui-fluid">
+
+			<h2>
+				<h:outputText value="#{messages.welcome}" />
+			</h2>
+			<h3>
+				<h:outputText value="#{messages.ourMenu}" />
+			</h3>
+			<p />
+			<p:commandButton value="#{messages.search}" immediate="true"
+							 action="#{store.getAllProducts}" styleClass="btn btn-default"
+							 update="@form"/>
+			<p />
+			<p:dataTable value="#{store.productList}" reflow="true" rows="5" paginator="true" paginatorPosition="bottom"
+						 var="product" >
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages.id}" />
+					</f:facet>
+					<h:outputText value="#{product.id}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages.name}" />
+					</f:facet>
+					<h:outputText value="#{product.name}" />
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="#{messages.price}" />
+					</f:facet>
+					<h:outputText value="#{product.price}" />
+				</p:column>
+				<p:column>
+					<h:commandLink value="#{messages.delete}"
+								   action="#{store.removeProduct(product.id)}" immediate="true" />
+				</p:column>
+			</p:dataTable>
+
+			<p />
+			<p:panelGrid columns="1"
+						 layout="grid"
+						 styleClass="ui-fluid">
+
+				<f:facet name="header">
+					<h:outputText value="#{messages.addProduct}" />
+				</f:facet>
+
+				<p:outputLabel for="name" value="#{messages.name}" />
+				<p:inputText id="name" value="#{store.name}" />
+				<p:message for="name" display="#{messages.name}" />
+
+				<p:outputLabel for="price" value="#{messages.price}" />
+				<p:inputText id="price" value="#{store.price}">
+					<f:convertNumber pattern="#0.00"/>
+				</p:inputText>
+				<p:message for="price" display="#{messages.price}" redisplay="" />
+
+			</p:panelGrid>
+
+			<p />
+
+			<p:commandButton value="#{messages.submit}"
+							 action="#{store.addProduct}" styleClass="btn btn-default"
+							 update="@form"/>
+
+		</div>
+	</h:form>
+</h:body>
+</html>

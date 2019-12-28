@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-web-client
+  namespace: default
+  labels:
+    app: store-web-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: store-web-client
+  template:
+    metadata:
+      name: store-web-client
+      labels:
+        app: store-web-client
+    spec:
+      containers:
+      - name: store-web-client
+        image: <your Docker Hub account>/store-web-client:v1
+        imagePullPolicy: Always
+        env:
+          - name: JAVA_STORE_API_URI
+            valueFrom:
+              configMapKeyRef:
+                name: store-rest-api-hostname-config
+                key: JAVA_STORE_API_URI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: store-web-client
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 9080
+  selector:
+    app: store-web-client

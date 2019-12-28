@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: store-rest-api
+  namespace: default
+  labels:
+    app: store-rest-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: store-rest-api
+  template:
+    metadata:
+      name: store-rest-api
+      labels:
+        app: store-rest-api
+    spec:
+      containers:
+      - name: store-rest-api
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: store-db-config
+                key: postgres_user
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: store-db-config
+                key: postgres_password
+          - name: POSTGRES_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: store-db-hostname-config
+                key: postgres_host
+        image: hillmerch/store-rest-api:v1
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: store-rest-api
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+  selector:
+    app: store-rest-api
